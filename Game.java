@@ -5,6 +5,8 @@ import java.io.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.net.*;
+
+import java.util.*;
 public class Game extends JPanel implements Runnable{
 	private static final int characterWidth = 35;
 	private static final int characterHeight = 35;
@@ -17,6 +19,7 @@ public class Game extends JPanel implements Runnable{
 	private static PrintWriter pw;
 	private static String msg;
 	private static int number;
+	private static ArrayList<String> enemies = new ArrayList<String>();
 	public Game(){
 		addKeyListener(
 				new KeyAdapter(){
@@ -26,7 +29,7 @@ public class Game extends JPanel implements Runnable{
 							removeOldPos();
 							characterY -= characterSpeed;
 							updatePos();
-							msg = (String.valueOf(characterX)+","+String.valueOf(characterY));
+							msg = (String.valueOf(characterX)+","+String.valueOf(characterY)+"-"+String.valueOf(number));
 							pw.println(msg);
 							pw.flush();
 						}
@@ -35,7 +38,7 @@ public class Game extends JPanel implements Runnable{
 							removeOldPos();
 							characterY += characterSpeed;
 							updatePos();
-							msg = (String.valueOf(characterX)+","+String.valueOf(characterY));
+							msg = (String.valueOf(characterX)+","+String.valueOf(characterY)+"-"+String.valueOf(number));
 							pw.println(msg);
 							pw.flush();
 						}
@@ -43,7 +46,7 @@ public class Game extends JPanel implements Runnable{
 							removeOldPos();
 							characterX += characterSpeed;
 							updatePos();
-							msg = (String.valueOf(characterX)+","+String.valueOf(characterY));
+							msg = (String.valueOf(characterX)+","+String.valueOf(characterY)+"-"+String.valueOf(number));
 							pw.println(msg);
 							pw.flush();
 						}
@@ -51,7 +54,7 @@ public class Game extends JPanel implements Runnable{
 							removeOldPos();
 							characterX -= characterSpeed;
 							updatePos();
-							msg = (String.valueOf(characterX)+","+String.valueOf(characterY));
+							msg = (String.valueOf(characterX)+","+String.valueOf(characterY)+"-"+String.valueOf(number));
 							pw.println(msg);
 							pw.flush();	
 						}
@@ -74,13 +77,29 @@ public class Game extends JPanel implements Runnable{
 		g.setColor(Color.BLACK);  
         g.fillRect(characterX,characterY,characterWidth,characterHeight);
 	}
-	public static void drawEnemy(String data,int enemyNumber){
+	public static void drawEnemy(String data,int enemyNumber,boolean isDrawnAlready,int indexInEnemies){
 		String[] dataSplitted =data.split(",");
-		int xOfEnemy = Integer.parseInt(dataSplitted[0]); 
-		int yOfEnemy = Integer.parseInt(dataSplitted[1]);
-		g.setColor(Color.RED);  
-        g.fillRect(xOfEnemy,yOfEnemy,characterWidth,characterHeight);
-	
+		int xOfEnemy;
+		int yOfEnemy;
+
+		xOfEnemy = Integer.parseInt(dataSplitted[0]); 
+		yOfEnemy = Integer.parseInt(dataSplitted[1]);
+		if(isDrawnAlready){
+			int oldXOfEnemy = Integer.parseInt(enemies.get(indexInEnemies).split("-")[0].split(",")[0]);
+			int oldYOfEnemy = Integer.parseInt(enemies.get(indexInEnemies).split("-")[0].split(",")[1]);
+			g.setColor(UIManager.getColor("Panel.background"));  
+        	g.fillRect(oldXOfEnemy,oldYOfEnemy,characterWidth,characterHeight);
+			g.setColor(Color.RED);  
+        	g.fillRect(xOfEnemy,yOfEnemy,characterWidth,characterHeight);
+        	oldXOfEnemy= xOfEnemy;
+        	oldYOfEnemy= yOfEnemy;
+			enemies.set(indexInEnemies,(data+"-"+String.valueOf(enemyNumber)));
+		}
+		else{
+			g.setColor(Color.RED);  
+        	g.fillRect(xOfEnemy,yOfEnemy,characterWidth,characterHeight);
+			enemies.add(data+"-"+String.valueOf(enemyNumber));
+		}
 	}
 	public void removeOldPos(){
 		g = getGraphics();
@@ -146,11 +165,22 @@ public class Game extends JPanel implements Runnable{
 				InputStreamReader in = new InputStreamReader(cli.getInputStream());
 				BufferedReader bf = new BufferedReader(in);
 				while(true){
-					
+					boolean isDrawnAlready = false;	
 					String msg = bf.readLine();
 					String[] data = msg.split("-");
-					if(Integer.parseInt(data[1]) !=number){
-						drawEnemy(data[0],Integer.parseInt(data[1]));
+					int i = 0;
+					if(Integer.parseInt(data[1])!=number){
+						while(i<enemies.size()){
+							if(Integer.parseInt(enemies.get(i).split("-")[1]) == Integer.parseInt(data[1])){
+								isDrawnAlready = true;
+								break;
+							}
+							else{
+								i++;
+							}
+						}
+
+					drawEnemy(data[0],Integer.parseInt(data[1]),isDrawnAlready,i);
 					}
 				}
 			}
