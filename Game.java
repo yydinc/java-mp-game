@@ -5,7 +5,7 @@ import java.io.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.net.*;
-public class Game extends JPanel{
+public class Game extends JPanel implements Runnable{
 	private static final int characterWidth = 35;
 	private static final int characterHeight = 35;
 	private static final int boardWidth = 850;
@@ -16,6 +16,7 @@ public class Game extends JPanel{
 	private static Graphics g ;
 	private static PrintWriter pw;
 	private static String msg;
+	private static int number;
 	public Game(){
 		addKeyListener(
 				new KeyAdapter(){
@@ -37,7 +38,6 @@ public class Game extends JPanel{
 							msg = (String.valueOf(characterX)+","+String.valueOf(characterY));
 							pw.println(msg);
 							pw.flush();
-
 						}
 						else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
 							removeOldPos();
@@ -53,7 +53,8 @@ public class Game extends JPanel{
 							updatePos();
 							msg = (String.valueOf(characterX)+","+String.valueOf(characterY));
 							pw.println(msg);
-							pw.flush();						}
+							pw.flush();	
+						}
 					}
 				}
 
@@ -73,51 +74,84 @@ public class Game extends JPanel{
 		g.setColor(Color.BLACK);  
         g.fillRect(characterX,characterY,characterWidth,characterHeight);
 	}
+	public static void drawEnemy(String data,int enemyNumber){
+		String[] dataSplitted =data.split(",");
+		int xOfEnemy = Integer.parseInt(dataSplitted[0]); 
+		int yOfEnemy = Integer.parseInt(dataSplitted[1]);
+		g.setColor(Color.RED);  
+        g.fillRect(xOfEnemy,yOfEnemy,characterWidth,characterHeight);
+	
+	}
 	public void removeOldPos(){
 		g = getGraphics();
 		g.setColor(UIManager.getColor("Panel.background"));  
         g.fillRect(characterX,characterY,characterWidth,characterHeight);
 	}
 
-	public static void main(String[] args) throws IOException {
-		Socket so = new Socket("localhost",5050);
-		ListenThread ls = new ListenThread(so);
-		ls.start();
-		pw = new PrintWriter(so.getOutputStream());
-
-		JFrame frame = new JFrame("Game.java");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Game g = new Game();
-
-
-		frame.add(g);
-		frame.pack();
+	@Override
+	public void run(){
 		
-		frame.setSize(boardWidth,boardHeight);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+	}
+
+	public static void main(String[] args) throws IOException {
+		try{
+			byte[] ipAddr = new byte[] {(byte)192,(byte)168,(byte)1,(byte)110};
+			Socket so = new Socket(InetAddress.getByAddress(ipAddr),5050);
+			Thread ls = new Thread(new ListenServer(so));
+			ls.start();
+			pw = new PrintWriter(so.getOutputStream());
+			InputStreamReader in = new InputStreamReader(so.getInputStream());
+			BufferedReader bf = new BufferedReader(in);
+			
+			String number1 = bf.readLine();
+			number = Integer.parseInt(number1);
+			System.out.println(number);
+			JFrame frame = new JFrame("Game");
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			Game g = new Game();
+
+
+			frame.add(g);
+			frame.pack();
+			
+			frame.setSize(boardWidth,boardHeight);
+			frame.setLocationRelativeTo(null);
+			frame.setVisible(true);
+		}
+		catch(IOException e){
+
+		}
 
 
 	}
-	private static class ListenThread extends Thread{
+	private static class ListenServer extends Thread implements Runnable{
 		private static Socket cli;
 		
 		@Override
 		public void run(){
+			listen();
+		}
+
+		public void listen(){
 			try{
+				InputStreamReader in = new InputStreamReader(cli.getInputStream());
+				BufferedReader bf = new BufferedReader(in);
 				while(true){
-					InputStreamReader in = new InputStreamReader(cli.getInputStream());
-					BufferedReader bf = new BufferedReader(in);
 					
 					String msg = bf.readLine();
-					System.out.println(msg);
+					String[] data = msg.split("-");
+					if(Integer.parseInt(data[1]) !=number){
+						drawEnemy(data[0],Integer.parseInt(data[1]));
+					}
 				}
 			}
 			catch(Exception e){
 				
 			}
+			
 		}
-		public ListenThread(Socket client){
+
+		public ListenServer(Socket client){
 			cli = client;
 		}
 
