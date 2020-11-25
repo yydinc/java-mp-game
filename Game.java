@@ -116,15 +116,25 @@ public class Game extends JPanel implements Runnable{
 		try{
 			byte[] ipAddr = new byte[] {(byte)192,(byte)168,(byte)1,(byte)110};
 			Socket so = new Socket(InetAddress.getByAddress(ipAddr),5050);
-			Thread ls = new Thread(new ListenServer(so));
-			ls.start();
-			pw = new PrintWriter(so.getOutputStream());
 			InputStreamReader in = new InputStreamReader(so.getInputStream());
 			BufferedReader bf = new BufferedReader(in);
 			
 			String number1 = bf.readLine();
 			number = Integer.parseInt(number1);
 			System.out.println(number);
+			
+			Thread ls = new Thread(new ListenServer(so));
+			ls.start();
+			/*
+			try{
+				Thread.sleep(300);
+			}
+			catch(Exception e){
+				
+			}
+			*/
+			pw = new PrintWriter(so.getOutputStream());
+			
 			SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
