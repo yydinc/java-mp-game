@@ -106,23 +106,32 @@ public class Game extends JPanel implements Runnable{
 			String number1 = bf.readLine();
 			number = Integer.parseInt(number1);
 			System.out.println(number);
-			JFrame frame = new JFrame("Game");
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			Game g = new Game();
-
-
-			frame.add(g);
-			frame.pack();
+			SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                createAndShowGUI();
+            }
+        	});
 			
-			frame.setSize(boardWidth,boardHeight);
-			frame.setLocationRelativeTo(null);
-			frame.setVisible(true);
 		}
 		catch(IOException e){
-
+			System.out.println("Baglantı Kurulamadı !");
 		}
 
 
+	}
+	private static void createAndShowGUI(){
+		JFrame frame = new JFrame("Game");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Game g = new Game();
+
+
+		frame.add(g);
+		frame.pack();
+		
+		frame.setSize(boardWidth,boardHeight);
+		//frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 	private static class ListenServer extends Thread implements Runnable{
 		private static Socket cli;
