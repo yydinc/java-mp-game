@@ -80,6 +80,10 @@ This is my first java game.
 
 ***Error2: Game starts but nothing happens !***
 
++You should terminate the running game and run a new one
+
++You can easily terminate it by pressing "Ctrl+C" while cmd is selected 
+
 +Actualy this is not an error
 
 +When you execute the game it connects to server
@@ -93,12 +97,4 @@ This is my first java game.
 +And it waits forever
 
 +I'm gonna fix it as soon as possible
-
-
-
-
-
-
-
-
 
