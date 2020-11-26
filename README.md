@@ -43,7 +43,7 @@ This is my first java game.
 # -----------Possible Errors----------
 
 
-***Error1 : 'javac is not recognized as an internal or external command***
+***Error1 : javac is not recognized as an internal or external command***
 
 +This error is given because of "javac.exe" isn't on the Path
 
