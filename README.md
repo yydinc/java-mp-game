@@ -4,12 +4,12 @@
 
 This is my first java game.
 
----Prerequests---
+# ---Prerequests---
 
 +Latest java jdk version required to play this game (java version "1.8.0_271")
 
 
----The Game---
+# ---The Game---
 
 +We have a character(a rectangle)
 
@@ -21,7 +21,7 @@ This is my first java game.
 
 
 
---- How To Play The Game ---
+# --- How To Play The Game ---
 
 +You have to download "Game.java" file
 
@@ -40,7 +40,7 @@ This is my first java game.
 
 
 
------------Possible Errors----------
+# -----------Possible Errors----------
 
 
 ***Error1 : 'javac is not recognized as an internal or external command***
