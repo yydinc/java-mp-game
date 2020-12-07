@@ -111,10 +111,10 @@ public class Game extends JPanel implements Runnable{
 	public void run(){
 		
 	}
-
+	////25.110.132.204
 	public static void main(String[] args) throws IOException {
 		try{
-			byte[] ipAddr = new byte[] {(byte)192,(byte)168,(byte)1,(byte)108};
+			byte[] ipAddr = new byte[] {(byte)25,(byte)110,(byte)132,(byte)204};
 			Socket so = new Socket(InetAddress.getByAddress(ipAddr),5050);
 			InputStreamReader in = new InputStreamReader(so.getInputStream());
 			BufferedReader bf = new BufferedReader(in);
